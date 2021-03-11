@@ -33,7 +33,9 @@
 
 
 //use a define or if needed (for cvars) a string
+#define OVERLAYPATHTEST "overlays/test"   //Path to the overlay relative to materials/.. - no need for extentions like .vmt or .vft
 #define OVERLAYPATH "overlays/storm"   //Path to the overlay relative to materials/.. - no need for extentions like .vmt or .vft
+#define OVERLAYPATH1 "overlays/storm1"   //Path to the overlay relative to materials/.. - no need for extentions like .vmt or .vft
 
 
 //Start
@@ -42,15 +44,17 @@ public void OnPluginStart()
 	RegConsoleCmd("sm_testoverlay", Command_TestOverlay, "Show overlay to client");
 	RegConsoleCmd("sm_testoverlayall", Command_TestOverlayAll, "Show overlay to all clients for 5 seconds");
 	RegConsoleCmd("sm_testremoveoverlay", Command_TestRemoveOverlay, "Remove overlay of all clients");
+	RegConsoleCmd("sm_testoverlay1", Command_TestOverlay1, "Show overlay to client");
+	RegConsoleCmd("sm_testoverlayall1", Command_TestOverlayAll1, "Show overlay to all clients for 5 seconds");
 }
-
 
 //MapStart
 public void OnMapStart()
 {
+	PrecacheDecalAnyDownload(OVERLAYPATHTEST);   //Stock for adding overlay to download table and precaching.
 	PrecacheDecalAnyDownload(OVERLAYPATH);   //Stock for adding overlay to download table and precaching.
+	PrecacheDecalAnyDownload(OVERLAYPATH1);   //Stock for adding overlay to download table and precaching.
 }
-
 
 //Show overlay to client
 public Action Command_TestOverlay(int client, int args)
@@ -60,23 +64,37 @@ public Action Command_TestOverlay(int client, int args)
 	return Plugin_Handled;
 }
 
-
 //Show overlay to all clients
 public Action Command_TestOverlayAll(int client, int args)
 {
-	ShowOverlayAll(OVERLAYPATH, 60.0);   //Show the overlay to the all clients - 5.0 as lifetime will delete the overlay after 5 seconds.
+	ShowOverlayAll(OVERLAYPATH, 5.0);   //Show the overlay to the all clients - 5.0 as lifetime will delete the overlay after 5 seconds.
 
 	return Plugin_Handled;
 }
 
-
-//Show overlay to client
+//Remove overlay from all clients
 public Action Command_TestRemoveOverlay(int client, int args)
 {
 	for (int i = 1; i <= MaxClients; i++)   //Loop through all clients. Client validation in stock function
 	{
 		CreateTimer(0.0, DeleteOverlay, GetClientUserId(i));   //We use a timer to remove the overlay.
 	}
+
+	return Plugin_Handled;
+}
+
+//Show overlay to client
+public Action Command_TestOverlay1(int client, int args)
+{
+	ShowOverlay(client, OVERLAYPATH1, 0.0);   //Show the overlay to the client - 0.0 as lifetime will show the overlay constant.
+
+	return Plugin_Handled;
+}
+
+//Show overlay to all clients
+public Action Command_TestOverlayAll1(int client, int args)
+{
+	ShowOverlayAll(OVERLAYPATH1, 5.0);   //Show the overlay to the all clients - 5.0 as lifetime will delete the overlay after 5 seconds.
 
 	return Plugin_Handled;
 }
